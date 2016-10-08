@@ -86,6 +86,7 @@ ENDPOINTS
               "Message" : "User Deleted"
             }
         ```
+
 - To get a user from an id 
     - POST 'user/'
         - Include the following
@@ -93,6 +94,23 @@ ENDPOINTS
             id
         ```
     - Expected output
+        ```
+        {
+          "email": "cheese@burdger.com",
+          "id": 8,
+          "username": "Cheeseburgerddd",
+          "teaches": [],
+          "courses": []
+        }
+        ```
+
+- To Login a user do the following
+    - POST 'login_user/'
+        - Include the following
+        ```
+        username, password
+        ```
+        - Expected Response
         ```
         {
           "email": "cheese@burdger.com",
@@ -497,6 +515,16 @@ To add a flashcard
   "back": "correct",
   "front": "I DONT LIKE LIVING"
 }
+        ```
+To remove a FlashCard
+    - DELETE 'remove_flashcard/'
+        - Send
+        ```
+        flashcard_id
+        ```
+        - Expected Response
+        ```
+        {"Message": "FlashCard was removed"}
         ```
 
 To add a comment
