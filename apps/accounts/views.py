@@ -380,3 +380,16 @@ def create_comment(request):
         comment.save()
         return Response(comment.to_json(), status=status.HTTP_201_CREATED)
     return Response({"Error": 'Invalid parameters. (stapl_id, user_id, text)'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class FileUploadView(APIView):
+    parser_classes = (FileUploadParser, )
+    permission_classes = ()
+
+    def post(self, request, format='jpg'):
+        up_file = request.FILES['file']
+        destination = open('/Users/Username/' + up_file.name, 'wb+')
+        for chunk in up_file.chunks():
+            destination.write(chunk)
+            destination.close()
