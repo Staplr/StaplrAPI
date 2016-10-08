@@ -78,7 +78,8 @@ class Course(models.Model):
             'Description': self.description,
             'Chapters': chapters,
             'Class Identifier': self.class_identifier,
-            'id': self.id
+            'id': self.id,
+            'qrcode': self.qrcode
         }
 
     def save(self, *args, **kwargs):
