@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FlashCard, User, Comment, Deck, Option, Response, Note, Poll, Chapter, Course
+from .models import FlashCard, User, Comment, Deck, Option, Answer, Note, Poll, Chapter, Course
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
