@@ -302,7 +302,7 @@ def handle_uploaded_file(f, user):
     for chunk in f.chunks():
         destination.write(chunk)
     destination.close()
-    return 'media/' + user.username + "/" + filename
+    return settings.SITE_URL + '/media/' + user.username + "/" + filename
 
 
 @api_view(['POST'])

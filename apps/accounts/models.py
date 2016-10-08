@@ -83,11 +83,11 @@ class Course(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.qrcode:
-            self.qrcode = 'media/' + self.class_identifier + ".png"
+            self.qrcode = settings.SITE_URL + '/media/' + self.class_identifier + ".png"
             if not os.path.exists(os.path.dirname(settings.MEDIA_ROOT + "/")):
                 os.makedirs(os.path.dirname(settings.MEDIA_ROOT + "/"))
             pq = pyqrcode.create(self.class_identifier)
-            pq.png(settings.MEDIA_ROOT + "/" + self.class_identifier + ".png", scale=5)
+            pq.png(settings.MEDIA_ROOT + "/" + self.class_identifier + ".png", scale=6)
         super(Course, self).save(*args, **kwargs)
 
 
