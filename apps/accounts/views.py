@@ -6,7 +6,9 @@ from .models import FlashCard, User, Course, Chapter, Stapl, Poll, Option, Deck,
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
 from django.conf import settings
+from PIL import Image
 import os
+import zbarlight
 
 
 class UserView(APIView):
@@ -395,3 +397,31 @@ def create_comment(request):
         comment.save()
         return Response(comment.to_json(), status=status.HTTP_201_CREATED)
     return Response({"Error": 'Invalid parameters. (stapl_id, user_id, text)'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def decode_qr(request):
+    if 'upload' in request.FILES:
+        image = Image.open(request.FILES['upload'])
+        image.load()
+        bytecode = zbarlight.scan_codes('qrcode', image)
+        code = bytecode[0].decode("utf-8")
+        print(code)
+        if Course.objects.filter(class_identifier=code).exists():
+            return Response({"Course_id": Course.objects.get(class_identifier=code).id},
+                            status=status.HTTP_200_OK)
+    return Response({"Error": "Unable to find course from QR Code"})
+
+
+@api_view(['POST'])
+@permission_classes('')
+def get_course_from_class_uuid(request):
+    if 'class_identifier' not in request.data:
+        return Response({"Error": "Invalid Parameters (class_identifier)"},
+                        status=status.HTTP_400_BAD_REQUEST)
+    class_identifier = request.data['class_identifier']
+    if Course.objects.filter(class_identifier=class_identifier).exists():
+        return Response({"Course_id": Course.objects.get(class_identifier=class_identifier).id},
+                        status=status.HTTP_200_OK)
+    return Response({"Error": "Unable to find Course"}, status=status.HTTP_400_BAD_REQUEST)

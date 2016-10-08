@@ -5,7 +5,7 @@ from .views import (
     course_from_id, remove_from_course, ChapterView, chapter_from_id, chapter_from_course,
     StaplsView, poll_from_chapter, poll_results, answer_poll, note_from_chapter, deck_from_chapter,
     flashcard_from_deck, comments_for_stapl, create_comment, login_user,
-    remove_flashcard
+    remove_flashcard, decode_qr, get_course_from_class_uuid
 )
 
 router = routers.DefaultRouter()
@@ -34,6 +34,8 @@ urlpatterns = [
     url(r'^login_user/$', login_user),
     url(r'^create_comment/$', create_comment),
     url(r'^remove_flashcard/$', remove_flashcard),
+    url(r'^decode_qr/$', decode_qr),
+    url(r'^get_course_from_class_uuid/$', get_course_from_class_uuid),
     url(r'^user/$', get_user_for_id),
     url(r'^', include(router.urls)),
 ]

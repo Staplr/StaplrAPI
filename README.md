@@ -563,3 +563,27 @@ To get all comments for a stapl
 }
 
 ```
+
+
+# QRCODE AND CLASS IDENTIFIER
+- To get Course ID from QRCode Image
+    - POST 'decode_qr/'
+        - Send
+        ```
+            request.files['upload']
+        ```
+        - Expected Response
+        ```
+        {"Message": 1}
+        ```
+
+- To get Course ID from class_identifier
+    - POST 'decode_qr/'
+        - Send
+        ```
+            class_identifier
+        ```
+        - Expected Response
+        ```
+        {"Message": 1}
+        ```

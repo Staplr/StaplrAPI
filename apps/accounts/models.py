@@ -3,6 +3,9 @@ from pygments.lexers import get_all_lexers
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from pygments.styles import get_all_styles
 from uuid import uuid4
+import pyqrcode
+import os
+from django.conf import settings
 
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
@@ -63,6 +66,7 @@ class Course(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField(max_length=200, blank=True)
     class_identifier = models.CharField(max_length=7, unique=True, default=str(uuid4())[:7])
+    qrcode = models.FilePathField(blank=True)
 
     def to_json(self):
         student_arr = [student.id for student in self.students.all()]
@@ -76,6 +80,15 @@ class Course(models.Model):
             'Class Identifier': self.class_identifier,
             'id': self.id
         }
+
+    def save(self, *args, **kwargs):
+        if not self.qrcode:
+            self.qrcode = 'media/' + self.class_identifier + ".png"
+            if not os.path.exists(os.path.dirname(settings.MEDIA_ROOT + "/")):
+                os.makedirs(os.path.dirname(settings.MEDIA_ROOT + "/"))
+            pq = pyqrcode.create(self.class_identifier)
+            pq.png(settings.MEDIA_ROOT + "/" + self.class_identifier + ".png", scale=5)
+        super(Course, self).save(*args, **kwargs)
 
 
 class Chapter(models.Model):
