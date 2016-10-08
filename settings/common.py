@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'rest_framework',
     'django_extensions',
+    'corsheaders',
     'rest_framework.authtoken',  # only if you use token authentication
 ]
 
@@ -54,6 +55,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -124,3 +126,4 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'accounts.User'
 
 SITE_URL = '127.0.0.1:8000'
+
