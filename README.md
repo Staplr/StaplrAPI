@@ -426,6 +426,114 @@ ENDPOINTS
     "Message": "Stapl Deleted"
     }
     ```
+- Get all stapls for chapter_id
+    - POST 'chapter_stapls/'
+        - Send
+        ```
+        chapter_id
+        ```
+        - Expected Response
+        ```
+        {
+  "Stapls": [
+    {
+      "user_id": 7,
+      "stapl_id": 2,
+      "comments": [],
+      "date_created": "2016-10-08T12:12:25.138161Z",
+      "options": [],
+      "Chapter_id": 2,
+      "Responses": []
+    }, 
+    {
+      "user_id": 7,
+      "stapl_id": 4,
+      "comments": [],
+      "date_created": "2016-10-08T12:19:55.929116Z",
+      "options": [
+        [
+          21,
+          "Y"
+        ],
+        [
+          22,
+          "e"
+        ],
+        [
+          23,
+          "l"
+        ],
+        [
+          24,
+          "l"
+        ],
+        [
+          25,
+          "o"
+        ],
+        [
+          26,
+          "w"
+        ],
+        [
+          27,
+          " "
+        ],
+        [
+          28,
+          ","
+        ],
+        [
+          29,
+          " "
+        ],
+        [
+          30,
+          "B"
+        ],
+        [
+          31,
+          "l"
+        ],
+        [
+          32,
+          "u"
+        ],
+        [
+          33,
+          "e"
+        ],
+        [
+          34,
+          ","
+        ],
+        [
+          35,
+          " "
+        ],
+        [
+          36,
+          " "
+        ],
+        [
+          37,
+          "J"
+        ],
+        [
+          38,
+          "a"
+        ],
+        [
+          39,
+          "y"
+        ]
+      ],
+      "Chapter_id": 2,
+      "Responses": []
+    }
+  ]
+}
+        ```
 To add a poll
     - POST 'poll_from_chapter/'
         - Send

@@ -67,7 +67,7 @@ def login_user(request):
         password = request.data['password']
         user = authenticate(username=username, password=password)
         if user is not None:
-            return Response({"User": user.to_json()})
+            return Response({"User": user.to_json()}, status=status.HTTP_200_OK)
         return Response({"Error": "Invalid password or username."}, status=status.HTTP_400_BAD_REQUEST)
     return Response({"Error": 'Invalid Credentals (username, password)'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -190,7 +190,7 @@ class ChapterView(APIView):
         return Response({'Id not found'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
-        chapters = [chapter.get_json() for chapter in Chapter.objects.all()]
+        chapters = [chapter.to_json() for chapter in Chapter.objects.all()]
         return Response({
             'Chapters': chapters
         }, status=status.HTTP_200_OK)
@@ -237,6 +237,23 @@ class StaplsView(APIView):
             stapl.delete()
             return Response({'Message': 'Stapl Deleted'}, status=status.HTTP_200_OK)
         return Response({'Id not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def chapter_stapls(request):
+    if 'chapter_id' in request.data:
+        chapter_id = request.data['chapter_id']
+        if Chapter.objects.filter(id=chapter_id).exists():
+            chapter = Chapter.objects.get(id=chapter_id)
+            stapls = [stapl.to_json() for stapl in Poll.objects.filter(chapter=chapter)]
+            stapls.extend([stapl.to_json() for stapl in Note.objects.filter(chapter=chapter)])
+            stapls.extend([stapl.to_json() for stapl in Deck.objects.filter(chapter=chapter)])
+            stapls.sort(key=lambda x: x['stapl_id'], reverse=False)
+            return Response({
+                            "Stapls": stapls
+                            }, status=status.HTTP_200_OK)
+    return Response({"Error": "Invalid Data (chapter_id)"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

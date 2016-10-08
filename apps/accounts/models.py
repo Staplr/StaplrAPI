@@ -99,7 +99,7 @@ class Chapter(models.Model):
     name = models.CharField(max_length=20)
 
     def to_json(self):
-        stapls = [stapl for stapl in self.stapls.all()]
+        stapls = [stapl.id for stapl in self.stapls.all()]
         return {
             'Name': self.name,
             'Description': self.description,
