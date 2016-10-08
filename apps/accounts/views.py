@@ -152,7 +152,9 @@ def courses_for_user(request):
         user_id = request.data['user_id']
         if User.objects.filter(id=user_id).exists():
             courses = [course.to_json() for course in User.objects.get(id=user_id).courses.all()]
-            return Response({"Courses": courses}, status=status.HTTP_200_OK)
+            teaches = [course.to_json() for course in User.objects.get(id=user_id).teaches.all()]
+            return Response({"Courses": courses,
+                             "Teaches": teaches}, status=status.HTTP_200_OK)
     return Response({"Error": "Invalid data or user_id"}, status=status.HTTP_400_BAD_REQUEST)
 
 
