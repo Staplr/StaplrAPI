@@ -139,7 +139,7 @@ class Poll(Stapl):
 
 
 class Note(Stapl):
-    text = models.TextField(max_length=10000)
+    filepath = models.FilePathField()
 
     def to_json(self):
         comments = [comment.id for comment in self.comments.all()]
@@ -148,7 +148,7 @@ class Note(Stapl):
             'date_created': self.date_created,
             'user_id': self.user.id,
             'comments': comments,
-            'text': self.text,
+            'filepath': self.filepath,
             'stapl_id': self.id
 
         }

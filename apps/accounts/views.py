@@ -5,6 +5,9 @@ from .serializers import UserSerializer
 from .models import FlashCard, User, Course, Chapter, Stapl, Poll, Option, Deck, Note, Answer, Comment
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
+from django.conf import settings
+import os
+
 
 class UserView(APIView):
 
@@ -289,10 +292,21 @@ def answer_poll(request):
     return Response({"Error": "Invalid parameters (stapl_id, user_id, option_id)"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def handle_uploaded_file(f, user):
+    filename = f.name  # get the name here
+    if not os.path.exists(os.path.dirname(settings.MEDIA_ROOT + "/" + user.username + "/")):
+        os.makedirs(os.path.dirname(settings.MEDIA_ROOT + "/" + user.username + "/"))
+    destination = open(settings.MEDIA_ROOT + "/" + user.username + "/" + filename, 'wb+')
+    for chunk in f.chunks():
+        destination.write(chunk)
+    destination.close()
+    return 'media/' + user.username + "/" + filename
+
+
 @api_view(['POST'])
 @permission_classes('')
 def note_from_chapter(request):
-    if all(name in request.data for name in ['chapter_id', 'user_id', 'text']):
+    if all(name in request.data for name in ['chapter_id', 'user_id']):
         if not Chapter.objects.filter(id=request.data['chapter_id']).exists():
             return Response({'Invalid chapter Id'}, status=status.HTTP_400_BAD_REQUEST)
         if not User.objects.filter(id=request.data['user_id']).exists():
@@ -302,9 +316,10 @@ def note_from_chapter(request):
         note = Note()
         note.chapter = chapter
         note.user = user
-        note.text = request.data['text']
+        note.filepath = handle_uploaded_file(request.FILES['upload'], user)
         note.save()
         return Response(note.to_json(), status=status.HTTP_200_OK)
+    print(request.data)
     return Response({"Error": 'Invalid parameters. (chapter_id, options[], user_id)'}, status=status.HTTP_400_BAD_REQUEST)
 
 
