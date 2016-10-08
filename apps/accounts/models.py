@@ -181,7 +181,7 @@ class FlashCard(models.Model):
             'id': self.id,
             'front': self.front,
             'back': self.back,
-            'user': self.user,
+            'user_id': self.user.id,
         }
 
 

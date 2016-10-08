@@ -1,38 +1,9 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import FlashCardSerializer, UserSerializer
-from .models import FlashCard, User, Course, Chapter, Stapl, Poll, Option, Deck, Note, Answer
+from .serializers import UserSerializer
+from .models import FlashCard, User, Course, Chapter, Stapl, Poll, Option, Deck, Note, Answer, Comment
 from rest_framework.decorators import api_view, permission_classes
-
-
-class FlashCardView(APIView):
-    """
-    List out all flashcards
-    """
-    permission_classes = ()
-
-    def get(self, request, format=None):
-        queryset = FlashCard.objects.all().order_by('date_created')
-        serializer = FlashCardSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = FlashCardSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, format=None):
-        if "id" in request.data:
-            try:
-                flashcard = FlashCard.objects.get(id=request.data["id"])
-            except FlashCard.DoesNotExist:
-                flashcard = None
-            if flashcard is None:
-                return Response({'Error': 'Flashcard not found.'}, status=status.HTTP_404_NOT_FOUND)
-            FlashCard.objects.get(id=request.data["id"]).delete()
-            return Response({'Message': 'Flashcard Deleted'}, status=status.HTTP_200_OK)
 
 
 class UserView(APIView):
@@ -303,3 +274,87 @@ def answer_poll(request):
         answer.save()
         return Response(answer.to_json(), status=status.HTTP_200_OK)
     return Response({"Error": "Invalid parameters (stapl_id, user_id, option_id)"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def note_from_chapter(request):
+    if all(name in request.data for name in ['chapter_id', 'user_id', 'text']):
+        if not Chapter.objects.filter(id=request.data['chapter_id']).exists():
+            return Response({'Invalid chapter Id'}, status=status.HTTP_404_NOT_FOUND)
+        if not User.objects.filter(id=request.data['user_id']).exists():
+            return Response({'Invalid user Id'}, status=status.HTTP_404_NOT_FOUND)
+        user = User.objects.get(id=request.data['user_id'])
+        chapter = Chapter.objects.get(id=request.data['chapter_id'])
+        note = Note()
+        note.chapter = chapter
+        note.user = user
+        note.text = request.data['text']
+        note.save()
+        return Response(note.to_json(), status=status.HTTP_200_OK)
+    return Response({"Error": 'Invalid parameters. (chapter_id, options[], user_id)'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def deck_from_chapter(request):
+    if all(name in request.data for name in ['chapter_id', 'user_id']):
+        if not Chapter.objects.filter(id=request.data['chapter_id']).exists():
+            return Response({'Invalid chapter Id'}, status=status.HTTP_404_NOT_FOUND)
+        if not User.objects.filter(id=request.data['user_id']).exists():
+            return Response({'Invalid user Id'}, status=status.HTTP_404_NOT_FOUND)
+        user = User.objects.get(id=request.data['user_id'])
+        chapter = Chapter.objects.get(id=request.data['chapter_id'])
+        deck = Deck()
+        deck.chapter = chapter
+        deck.user = user
+        deck.save()
+        return Response(deck.to_json(), status=status.HTTP_200_OK)
+    return Response({"Error": 'Invalid parameters. (chapter_id, user_id)'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def flashcard_from_deck(request):
+    if all(name in request.data for name in ['front', 'back', 'deck_id', 'user_id']):
+        if not Deck.objects.filter(id=request.data['deck_id']).exists():
+            return Response({'Invalid deck Id'}, status=status.HTTP_404_NOT_FOUND)
+        if not User.objects.filter(id=request.data['user_id']).exists():
+            return Response({'Invalid user Id'}, status=status.HTTP_404_NOT_FOUND)
+        flash = FlashCard()
+        flash.front = request.data['front']
+        flash.back = request.data['back']
+        flash.user = User.objects.get(id=request.data['user_id'])
+        flash.deck = Deck.objects.get(id=request.data['deck_id'])
+        flash.save()
+        return Response(flash.to_json(), status=status.HTTP_200_OK)
+    return Response({"Error": 'Invalid parameters. (front,back, deck_id, user_id)'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def comments_for_stapl(request):
+    if 'stapl_id' in request.data:
+        if not Stapl.objects.filter(id=request.data['stapl_id']).exists():
+            return Response({'Invalid stapl Id'}, status=status.HTTP_404_NOT_FOUND)
+        stapl = Stapl.objects.get(id=request.data['stapl_id'])
+        comments = [comment.to_json() for comment in stapl.comments.all().order_by('-date_created')]
+        return Response({"Comments": comments}, status=status.HTTP_200_OK)
+    return Response({"Error": 'Invalid parameters. (stapl_id)'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes('')
+def create_comment(request):
+    if all(name in request.data for name in ['stapl_id', 'user_id', 'comment']):
+        if not Stapl.objects.filter(id=request.data['stapl_id']).exists():
+            return Response({'Invalid deck Id'}, status=status.HTTP_404_NOT_FOUND)
+        if not User.objects.filter(id=request.data['user_id']).exists():
+            return Response({'Invalid user Id'}, status=status.HTTP_404_NOT_FOUND)
+        comment = Comment()
+        comment.user = User.objects.get(id=request.data['user_id'])
+        comment.stapl = Stapl.objects.get(id=request.data['stapl_id'])
+        comment.text = request.data['comment']
+        comment.save()
+        return Response(comment.to_json(), status=status.HTTP_201_CREATED)
+    return Response({"Error": 'Invalid parameters. (stapl_id, user_id, text)'}, status=status.HTTP_404_NOT_FOUND)

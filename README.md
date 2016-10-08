@@ -410,10 +410,128 @@ To get percentages of a poll
         ```
             stapl_id
         ```
+        - Expected Results
+        ```
+{
+  "results": [
+    [
+      43,
+      "Yellow , Blue,  Jay",
+      100
+    ],
+    [
+      44,
+      "Red green",
+      0
+    ]
+  ]
+}
+        ```
 
 To answer a poll.
     - POST 'answer_poll/'
         - Send
         ```
-        user_id, option_id
+        user_id, option_id, stapl_id
         ```
+        - Expected results
+        ```
+            {
+              "user_id": 7,
+              "poll_id": 8,
+              "option_id": 43
+            }
+        ```
+
+
+To add a note
+    - POST 'note_from_chapter/'
+        - Send
+        ```
+        chapter_id, text, user_id
+        ```
+        - You can send multiple options by sending "options": "item", "options": "item"
+        - Expected Response
+        ```
+{
+  "date_created": "2016-10-08T12:55:34.186586Z",
+  "comments": [],
+  "user_id": 7,
+  "text": "Yellow , Blue,  Jay, please dont hurt me im in absolute agony.",
+  "Chapter_id": 2,
+  "stapl_id": 9
+}
+        ```
+
+
+To add a deck
+    - POST 'deck_from_chapter/'
+        - Send
+        ```
+        chapter_id, user_id
+        ```
+        - You can send multiple options by sending "options": "item", "options": "item"
+        - Expected Response
+        ```
+{
+  "date_created": "2016-10-08T12:55:34.186586Z",
+  "comments": [],
+  "user_id": 7,
+  "text": "Yellow , Blue,  Jay, please dont hurt me im in absolute agony.",
+  "Chapter_id": 2,
+  "stapl_id": 9
+}
+        ```
+
+To add a flashcard
+    - Post 'flashcard_from_deck'
+        - Send
+        ```
+            front, back, deck_id, user_id
+        ```
+        - Expected Response
+        ```
+{
+  "id": 2,
+  "user_id": 6,
+  "back": "correct",
+  "front": "I DONT LIKE LIVING"
+}
+        ```
+
+To add a comment
+    - POST 'create_comment/'
+        - Send
+        ```
+            comment, user_id, stapl_id
+        ```
+        - Expected Response
+        ```
+        {
+  "text": "I really hate you so much at this moment.",
+  "date_created": "2016-10-08T13:21:52.466934Z",
+  "user_id": 7,
+  "stapl_id": 11
+}
+```
+
+To get all comments for a stapl
+    - POST 'comments_for_stapl/'
+        - Send
+        ```
+        stapl_id
+        ```
+        - Expected Response
+        ```
+        {
+  "Comments": [
+    {
+      "text": "I really hate you so much at this moment.",
+      "user_id": 7,
+      "date_created": "2016-10-08T13:21:52.466934Z",
+      "stapl_id": 11
+    }
+  ]
+}
+
+```

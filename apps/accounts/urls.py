@@ -1,9 +1,10 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from .views import (
-    FlashCardView, UserView, get_user_for_id, CourseView, add_to_course,
+    UserView, get_user_for_id, CourseView, add_to_course,
     course_from_id, remove_from_course, ChapterView, chapter_from_id, chapter_from_course,
-    StaplsView, poll_from_chapter, poll_results, answer_poll
+    StaplsView, poll_from_chapter, poll_results, answer_poll, note_from_chapter, deck_from_chapter,
+    flashcard_from_deck, comments_for_stapl, create_comment
 )
 
 router = routers.DefaultRouter()
@@ -25,7 +26,11 @@ urlpatterns = [
     url(r'^chapter_from_course/$', chapter_from_course),
     url(r'^poll_results/$', poll_results),
     url(r'^answer_poll/$', answer_poll),
+    url(r'^note_from_chapter/$', note_from_chapter),
+    url(r'^flashcard_from_deck/$', flashcard_from_deck),
+    url(r'^deck_from_chapter/$', deck_from_chapter),
+    url(r'^comments_for_stapl/$', comments_for_stapl),
+    url(r'^create_comment/$', create_comment),
     url(r'^user/$', get_user_for_id),
-    url(r'^flashcards/$', FlashCardView.as_view()),
     url(r'^', include(router.urls)),
 ]
