@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='flashcard',
             name='chapter',
-            field=models.ForeignKey(default='NOTHING', on_delete=django.db.models.deletion.CASCADE, related_name='flashcards', to='accounts.Chapter'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='flashcards', to='accounts.Chapter'),
             preserve_default=False,
         ),
         migrations.AddField(

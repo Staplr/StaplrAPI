@@ -11,11 +11,11 @@ STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, username, email, password, **kwargs):
+    def create_user(self, username, email, password, name, **kwargs):
         user = self.model(
-            username=username
+            username=username,
             email=self.normalize_email(email),
-            is_active=True,
+            name=name,
             **kwargs
         )
         user.set_password(password)
@@ -45,19 +45,40 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.username
 
+    def to_json(self):
+        takes = [course.id for course in self.courses.all()]
+        teacher = [teach.id for teach in self.teaches.all()]
+        return {
+            'username': self.username,
+            'email': self.email,
+            'id': self.id,
+            'teaches': teacher,
+            'courses': takes,
+        }
+
 
 class Course(models.Model):
     instructor = models.ForeignKey(User, related_name="teaches")
-    students = models.ManyToMany(User, related_name="courses")
+    students = models.ManyToManyField(User, related_name="courses", null=True)
     name = models.CharField(max_length=30)
-    description = models.TextField(max_length=200)
-    qrcode = models.CharField(max_length=7, unique=True, default=str(uuid4())[:7])
+    description = models.TextField(max_length=200, blank=True)
+    class_identifier = models.CharField(max_length=7, unique=True, default=str(uuid4())[:7])
+
+    def to_json(self):
+        student_arr = [student.id for student in self.students.all()]
+        return {
+            'Instructor': self.instructor.id,
+            'Students': student_arr,
+            'Name': self.name,
+            'Description': self.description,
+            'Class Identifier': self.class_identifier
+        }
 
 
 class Chapter(models.Model):
     course = models.ForeignKey(Course, related_name="chapters")
     description = models.TextField(max_length=200)
-    order = models.IntegerField(null=True)
+    order = models.IntegerField(default=None, null=True)
 
 
 class Stapl(models.Model):
@@ -74,10 +95,15 @@ class Note(Stapl):
     text = models.TextField(max_length=10000)
 
 
+class Deck(Stapl):
+    name = models.CharField(max_length=20)
+
+
 class FlashCard(models.Model):
     front = models.TextField(max_length=100)
     back = models.TextField(max_length=100)
     user = models.ForeignKey(User)
+    deck = models.ForeignKey(Deck)
 
 
 class Option(models.Model):
@@ -86,15 +112,14 @@ class Option(models.Model):
 
 
 class Response(models.Model):
-    option = models.ForeignKey(option, related_name="responses")
+    option = models.ForeignKey(Option, related_name="responses")
     user = models.ForeignKey(User)
     poll = models.ForeignKey(Poll, related_name="responses")
 
 
 class Comment(models.Model):
     user = models.ForeignKey(User, related_name="comments")
-    stapl = models.ForeignKey(stapl, related_name="comments")
+    stapl = models.ForeignKey(Stapl, related_name="comments")
     date_created = models.DateTimeField(auto_now=True)
     text = models.TextField(max_length=1000)
-
 

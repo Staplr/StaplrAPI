@@ -3,8 +3,8 @@ from .models import FlashCard, User, Comment, Deck, Option, Response, Note, Poll
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    courses = serializers.PrimaryKeyRelatedField(many=True)
-    teaches = serializers.PrimaryKeyRelatedField(many=True)
+    courses = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    teaches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -27,3 +27,17 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     instructor = serializers.PrimaryKeyRelatedField(read_only=True)
+    students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Course
+        fields = ('id', 'name', 'instructor', 'students', 'description', 'class_identifier')
+
+
+class PollSerializer(serializers.ModelSerializer):
+    options = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Poll
+        fields = ('id', 'options', 'active')
+
