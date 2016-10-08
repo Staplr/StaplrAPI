@@ -239,6 +239,50 @@ ENDPOINTS
           'id' : 3
         }
     ```
+- To get a course from a user id
+    - POST `courses_for_user/`
+        - Send
+        ```
+            user_id
+        ```
+        - Expected response
+        ```
+{
+  "Teaches": [
+    {
+      "Class Identifier": "6114824",
+      "qrcode": "http://api.batterystapler.com/media/6114824.png",
+      "Students": [],
+      "Chapters": [],
+      "Name": "Cs hates us",
+      "Description": "LIke it realllly hates us",
+      "id": 4,
+      "Instructor": 6
+    },
+    {
+      "Class Identifier": "5d72b32",
+      "qrcode": "http://api.batterystapler.com/media/5d72b32.png",
+      "Students": [],
+      "Chapters": [],
+      "Name": "Lets do it",
+      "Description": "Horrible times",
+      "id": 2,
+      "Instructor": 6
+    },
+    {
+      "Class Identifier": "c0b4f63",
+      "qrcode": "http://api.batterystapler.com/media/c0b4f63.png",
+      "Students": [],
+      "Chapters": [],
+      "Name": "This is where we panic a lot.",
+      "Description": "Badtimes",
+      "id": 1,
+      "Instructor": 6
+    }
+  ],
+  "Courses": []
+
+        ```
 
 # Chapter
 
@@ -529,7 +573,7 @@ To remove a FlashCard
 
 To add a comment
     - POST 'create_comment/'
-        - Send
+        - Send 
         ```
             comment, user_id, stapl_id
         ```
