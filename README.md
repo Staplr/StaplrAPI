@@ -466,7 +466,7 @@ To add a note
     - POST 'note_from_chapter/'
         - Send
         ```
-        chapter_id, text, user_id
+        chapter_id, request.files['upload'] (NAME IT WITH UPLOAD FOR SENDING), user_id
         ```
         - You can send multiple options by sending "options": "item", "options": "item"
         - Expected Response
@@ -475,7 +475,7 @@ To add a note
   "date_created": "2016-10-08T12:55:34.186586Z",
   "comments": [],
   "user_id": 7,
-  "text": "Yellow , Blue,  Jay, please dont hurt me im in absolute agony.",
+  "filepath": "media/cheesebuger/sep21.pdf",
   "Chapter_id": 2,
   "stapl_id": 9
 }
