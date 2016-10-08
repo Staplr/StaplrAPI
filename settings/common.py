@@ -25,7 +25,7 @@ SECRET_KEY = 'akjlhsdhf187290321ljkhOIUIALHKJSDALK@UI#^&JHK!Lhsadhajsldfda'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [('api.batterystapler.com',ZZ)]
 
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '../static/'))
 STATIC_URL = '/static/'
