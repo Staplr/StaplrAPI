@@ -116,11 +116,13 @@ class Stapl(models.Model):
     user = models.ForeignKey(User, related_name="stapls")
 
     def to_json(self):
+        comments = [comment.id for comment in self.comments.all()]
         return {
             'Chapter_id': self.chapter.id,
             'date_created': self.date_created,
             'user_id': self.user.id,
             'stapl_id': self.id,
+            'comments': comments,
         }
 
 
@@ -130,16 +132,13 @@ class Poll(Stapl):
     def to_json(self):
         responses = [response.id for response in self.responses.all()]
         options = [[option.id, option.text] for option in self.options.all()]
-        comments = [comment.id for comment in self.comments.all()]
-        return {
-            'Chapter_id': self.chapter.id,
-            'date_created': self.date_created,
-            'user_id': self.user.id,
-            'Responses': responses,
+        stpl_dict = super(self).to_json().copy()
+        poll_dict = {
             'options': options,
-            'stapl_id': self.id,
-            'comments': comments
+            'answers': responses
         }
+        stpl_dict.update(poll_dict)
+        return stpl_dict
 
     def get_percents(self):
         total = sum(option.responses.count() for option in self.options.all())
@@ -156,16 +155,9 @@ class Note(Stapl):
     filepath = models.FilePathField()
 
     def to_json(self):
-        comments = [comment.id for comment in self.comments.all()]
-        return {
-            'Chapter_id': self.chapter.id,
-            'date_created': self.date_created,
-            'user_id': self.user.id,
-            'comments': comments,
-            'filepath': self.filepath,
-            'stapl_id': self.id
-
-        }
+        stpl_dict = super(self).to_json().copy()
+        stpl_dict.update({'filepath': self.filepath})
+        return stpl_dict
 
 
 class Deck(Stapl):
@@ -173,15 +165,12 @@ class Deck(Stapl):
 
     def to_json(self):
         flashcards = [flashcard.id for flashcard in self.flashcards.all()]
-        comments = [comment.id for comment in self.comments.all()]
-        return {
-            'Chapter_id': self.chapter.id,
-            'date_created': self.date_created,
-            'user_id': self.user.id,
-            'comments': comments,
+        stpl_dict = super(self).to_json().copy()
+        stpl_dict.update({
             'flashcards': flashcards,
-            'stapl_id': self.id
-        }
+            'name': self.name,
+        })
+        return stpl_dict
 
 
 class FlashCard(models.Model):

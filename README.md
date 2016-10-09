@@ -1,6 +1,4 @@
-# django-scaffold
-
-
+# Staplr Staples!
 ENDPOINTS
 
 # User
